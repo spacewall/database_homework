@@ -60,12 +60,30 @@ def add_phone_number(connection, email, number):
 
     connection.commit()
 
-def update_client_info(connection, email, new_first_name, new_last_name, new_email):
+def update_client_info(connection, email, new_first_name=None, new_last_name=None, new_email=None):
     with connection.cursor() as cur:
         cur.execute("""
-        UPDATE client SET first_name = %s, last_name = %s, email = %s WHERE email=%s;""", 
-        (new_first_name, new_last_name, new_email, email)
+        SELECT first_name, last_name, email FROM client 
+        WHERE email = %s;""", (email, )
         )
+
+        first_name, last_name, _ = cur.fetchall()[0]
+
+        if new_first_name not in (None, first_name):
+            cur.execute("""
+            UPDATE client SET first_name = %s WHERE email = %s;""", 
+            (new_first_name, email)
+            )
+        if new_last_name not in (None, last_name):
+            cur.execute("""
+            UPDATE client SET last_name = %s WHERE email = %s;""", 
+            (new_last_name, email)
+            )
+        if new_email not in (None, email):
+            cur.execute("""
+            UPDATE client SET email = %s WHERE email = %s;""", 
+            (new_email, email)
+            )
 
     connection.commit()
 
@@ -132,16 +150,16 @@ def main():
         add_phone_number(connection, email, number)
         # remove_phone_number(connection, email, number)
 
-        new_first_name = "Adam"
+        new_first_name = "Swimmer"
         new_last_name = "Peaty"
         email = "podam@oiate.ru"
         new_email = "peadam@oiate.ru"
 
-        update_client_info(connection, email, new_first_name, new_last_name, new_email)
+        update_client_info(connection, email=email, new_last_name=new_last_name, new_email=email)
         # remove_client_info(connection, first_name, last_name, email)
-        add_client(connection, first_name, last_name, email)
-        search_client(connection, 'DA', "Po", email, number)
-        # check_table(connection)
+        add_client(connection, first_name, last_name, new_email)
+        # search_client(connection, first_name, "Po", email, number)
+        check_table(connection)
 
 if __name__ == "__main__":
     main()

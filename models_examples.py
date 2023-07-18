@@ -10,7 +10,7 @@ class Course(Base):
     id = sql.Column(sql.Integer, primary_key=True)
     name = sql.Column(sql.String(40), unique=True)
 
-    homework = relationship("Homework", back_populates="course")
+    # homework = relationship("Homework", back_populates="course")
 
     def __str__(self):
         return f'Course {self.id}: {self.name}'

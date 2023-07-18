@@ -1,5 +1,5 @@
 import sqlalchemy
-from models import create_tables, Course, Homework
+from models_examples import create_tables, Course, Homework
 from sqlalchemy.orm import sessionmaker
 from dotenv import dotenv_values
 

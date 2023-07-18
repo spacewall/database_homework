@@ -109,7 +109,7 @@ def remove_client_info(connection, first_name, last_name, email):
         
     connection.commit()
 
-def search_client(connection, first_name, last_name, email, number):
+def search_client(connection, first_name='%', last_name='%', email='%', number='%'):
     # В задании написано найти пользователя, поэтому в контексте своей реализации под этим понимается найти уникальный id клиента, зная его, можно всегда вытащить и атрибуты других полей конструкцией JOIN
     with connection.cursor() as cur:
         # По данным пользователя

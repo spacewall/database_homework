@@ -31,9 +31,9 @@ class Shop(Base):
 class Stock(Base):
     __tablename__ = "stock"
 
-    id_book = sql.Column(sql.Integer, sql.ForeignKey("book.id"), nullable=False)
-    id_shop = sql.Column(sql.Integer, sql.ForeignKey("shop.id"), nullable=False)
-    id = sql.PrimaryKeyConstraint(id_book, id_shop)
+    id_book = sql.Column(sql.Integer, sql.ForeignKey("book.id"), nullable=False, primary_key=True)
+    id_shop = sql.Column(sql.Integer, sql.ForeignKey("shop.id"), nullable=False, primary_key=True)
+    id = sql.Column(sql.Integer, primary_key=True)
     count = sql.Column(sql.Integer, nullable=False)
 
 
@@ -45,3 +45,8 @@ class Sale(Base):
     date_sale = sql.Column(sql.Date, nullable=False)
     id_stock = sql.Column(sql.Integer, sql.ForeignKey("stock.id"), nullable=False)
     count = sql.Column(sql.Integer, nullable=False)
+
+
+def create_tables(engine):
+    Base.metadata.drop_all(engine)
+    Base.metadata.create_all(engine)

@@ -1,3 +1,4 @@
+from datetime import datetime
 import sqlalchemy as sql
 from sqlalchemy.orm import declarative_base, relationship
 
@@ -14,9 +15,9 @@ class Publisher(Base):
 class Book(Base):
     __tablename__ = "book"
 
-    id = sql.Column(sql.Integer, primary_key=True)
-    title = sql.Column(sql.String, nullable=False, unique=True)
-    id_publisher = sql.Column(sql.Integer, sql.ForeignKey("publisher.id"), nullable=False)
+    id = sql.Column(sql.Integer, primary_key=True, unique=True)
+    title = sql.Column(sql.String, nullable=False, primary_key=True)
+    id_publisher = sql.Column(sql.Integer, sql.ForeignKey("publisher.id", ondelete='CASCADE'), nullable=False, primary_key=True)
 
     publisher = relationship(Publisher, backref="book")
 
@@ -31,20 +32,25 @@ class Shop(Base):
 class Stock(Base):
     __tablename__ = "stock"
 
-    id_book = sql.Column(sql.Integer, sql.ForeignKey("book.id"), nullable=False, primary_key=True)
-    id_shop = sql.Column(sql.Integer, sql.ForeignKey("shop.id"), nullable=False, primary_key=True)
-    id = sql.Column(sql.Integer, primary_key=True)
+    id_book = sql.Column(sql.Integer, sql.ForeignKey("book.id", ondelete='CASCADE'), nullable=False, primary_key=True)
+    id_shop = sql.Column(sql.Integer, sql.ForeignKey("shop.id", ondelete='CASCADE'), nullable=False, primary_key=True)
+    id = sql.Column(sql.Integer, primary_key=True, unique=True)
     count = sql.Column(sql.Integer, nullable=False)
+
+    book = relationship(Book, backref='stock')
+    shop = relationship(Shop, backref='stock')
 
 
 class Sale(Base):
     __tablename__ = "sale"
 
     id = sql.Column(sql.Integer, primary_key=True)
-    price = sql.Column(sql.Integer, nullable=False)
-    date_sale = sql.Column(sql.Date, nullable=False)
-    id_stock = sql.Column(sql.Integer, sql.ForeignKey("stock.id"), nullable=False)
+    price = sql.Column(sql.Float, nullable=False)
+    date_sale = sql.Column(sql.Date, nullable=False, default=datetime.now)
+    id_stock = sql.Column(sql.Integer, sql.ForeignKey("stock.id", ondelete='CASCADE'), nullable=False)
     count = sql.Column(sql.Integer, nullable=False)
+
+    stock = relationship(Stock, backref='sale')
 
 
 def create_tables(engine):
